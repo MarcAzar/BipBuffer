@@ -15,29 +15,33 @@
 ##  ::
 ##    import bipbuffer
 ##
+##    # Create buffer with capacity of 4 int items#
 ##    var buffer = newBipBuffer[int](4) 
+##    
+##    # Reserve 4 slots for insert on buffer
+##    var reserved = buffer.reserve(4)  
+##    
+##    # Assign data to buffer slots
+##      block:
+##        reserved[0] = 2 
+##        reserved[1] = 9
+##        reserved[2] = 56
+##        reserved[3] = 128 
 ##  
-##    var reserved = buffer.reserve(4)  # Reserve 4 slots for insert
-##  
-##    reserved[0] = 2 # Assign data to buffer
-##  
-##    reserved[1] = 9
-##  
-##    reserved[2] = 56
-##  
-##    reserved[3] = 128 
-##  
-##    buffer.commit(4)  # Commit reserved data into an available region
-##  
-##    var bloc = buffer.read # Get stored data in a contiguous block
-##
-##    buffer.decommit(2)  # Mark first two parts of the block as free
-##
-##    bloc = buffer.read # The block should now contain only the last two values
-##
-##    assert bloc[0] == 218
-##  
-##    assert bloc[1] == 56
+##    # Commit reserved data into an available region
+##    buffer.commit(4)  
+##    
+##    # Get stored data in a contiguous block
+##    var bloc = buffer.read 
+##    
+##    # Mark first two parts of the block as free
+##    buffer.decommit(2)  
+##    
+##    # The block should now contain only the last two values
+##    block:
+##      bloc = buffer.read 
+##      assert bloc[0] == 218
+##      assert bloc[1] == 56
 ##
 ##  .. _Bip Buffer: https://www.codeproject.com/articles/3479/the-bip-buffer-the-circular-buffer-with-a-twist
 ##
