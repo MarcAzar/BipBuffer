@@ -18,21 +18,27 @@
 ##    # Create buffer with capacity of 4 int items#
 ##    var buffer = newBipBuffer[int](4) 
 ##    
-##    # Reserve 4 slots for insert on buffer
-##    var reserved = buffer.reserve(4)  
 ##    
-##    # Assign data to buffer slots
-##      block:
-##        reserved[0] = 2 
-##        reserved[1] = 9
-##        reserved[2] = 56
-##        reserved[3] = 128 
+##    block:
+##      # Reserve 4 slots for insert on buffer
+##      var reserved = buffer.reserve(4)  
+##      
+##      # Assign data to buffer slots
+##      reserved[0] = 7
+##      reserved[1] = 22
+##      reserved[2] = 218
+##      reserved[3] = 56 
 ##  
 ##    # Commit reserved data into an available region
 ##    buffer.commit(4)  
 ##    
-##    # Get stored data in a contiguous block
-##    var bloc = buffer.read 
+##    block:
+##      # Get stored data in a contiguous block
+##      var bloc = buffer.read
+##      assert bloc[0] == 7
+##      assert bloc[1] == 22
+##      assert bloc[2] == 218
+##      assert bloc[3] == 56
 ##    
 ##    # Mark first two parts of the block as free
 ##    buffer.decommit(2)  
