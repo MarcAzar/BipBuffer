@@ -5,16 +5,16 @@ A Nim implementation of Simon Cooke's <a class="external reference" href="https:
 ```
 import bipbuffer
 
-var buffer = newBipBuffer[int](4)
-var reserved = buffer.reserve(4)  # Reserve 4 slots for insert
+var buffer = newBipBuffer[int](4) # Create buffer wuth capacity of 4 int items
+var reserved = buffer.reserve(4)  # Reserve 4 slots for insert on buffer
  
  block:
-  reserved[0] = 2 # Assign data to buffer
+  reserved[0] = 2 # Assign data to buffer slots
   reserved[1] = 9
   reserved[2] = 56
   reserved[3] = 128
 
-buffer.commit(4)  # Commit reserved data into an available region
+buffer.commit(4)  # Commit reserved data into an available region on buffer
 
 var bloc = buffer.read # Get stored data in a contiguous block
 
