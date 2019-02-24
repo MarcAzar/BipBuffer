@@ -6,17 +6,22 @@ A Nim implementation of Simon Cooke's <a class="external reference" href="https:
 import bipbuffer
 
 var buffer = newBipBuffer[int](4) # Create buffer wuth capacity of 4 int items
-var reserved = buffer.reserve(4)  # Reserve 4 slots for insert on buffer
  
  block:
-  reserved[0] = 2 # Assign data to buffer slots
-  reserved[1] = 9
-  reserved[2] = 56
-  reserved[3] = 128
+  var reserved = buffer.reserve(4)  # Reserve 4 slots for insert on buffer
+  reserved[0] = 7 # Assign data to buffer slots
+  reserved[1] = 22
+  reserved[2] = 218
+  reserved[3] = 56
 
 buffer.commit(4)  # Commit reserved data into an available region on buffer
 
-var bloc = buffer.read # Get stored data in a contiguous block
+block:
+  var bloc = buffer.read # Get stored data in a contiguous block
+  assert bloc[0] == 7
+  assert bloc[1] == 22
+  assert bloc[2] == 218
+  assert bloc[3] = 56
 
 buffer.decommit(2)  # Mark first two parts of the block as free
 
