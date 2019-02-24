@@ -4,16 +4,22 @@ A Nim implementation of Simon Cooke's <a class="external reference" href="https:
 ## Example Usage                                                        
 ```
 import bipbuffer
+
 var buffer = newBipBuffer[int](4)
 var reserved = buffer.reserve(4)  # Reserve 4 slots for insert
+ 
  block:
   reserved[0] = 2 # Assign data to buffer
   reserved[1] = 9
   reserved[2] = 56
   reserved[3] = 128
+
 buffer.commit(4)  # Commit reserved data into an available region
+
 var bloc = buffer.read # Get stored data in a contiguous block
+
 buffer.decommit(2)  # Mark first two parts of the block as free
+
 block:
   bloc = buffer.read # The block should now contain only the last two values
   assert bloc[0] == 218
