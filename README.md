@@ -4,18 +4,20 @@ A Nim implementation of Simon Cooke's <a class="external reference" href="https:
 ## Example Usage                                                        
 ```
 import bipbuffer
- var buffer = newBipBuffer[int](4)
+var buffer = newBipBuffer[int](4)
 var reserved = buffer.reserve(4)  # Reserve 4 slots for insert
-reserved[0] = 2 # Assign data to buffer
-reserved[1] = 9
-reserved[2] = 56
-reserved[3] = 128
+ block:
+  reserved[0] = 2 # Assign data to buffer
+  reserved[1] = 9
+  reserved[2] = 56
+  reserved[3] = 128
 buffer.commit(4)  # Commit reserved data into an available region
 var bloc = buffer.read # Get stored data in a contiguous block
 buffer.decommit(2)  # Mark first two parts of the block as free
-bloc = buffer.read # The block should now contain only the last two values
-assert bloc[0] == 218
-assert bloc[1] == 56
+block:
+  bloc = buffer.read # The block should now contain only the last two values
+  assert bloc[0] == 218
+  assert bloc[1] == 56
 ```
 ## Installation
 Install <a class="external reference" href="https://nim-lang.org/install.html">Nim</a> for Windows or Unix by following the instructions in , or preferably by installing <a class="reference external" href="https://github.com/dom96/choosenim">choosenim</a>
