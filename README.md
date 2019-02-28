@@ -36,4 +36,4 @@ Install <a class="external reference" href="https://nim-lang.org/install.html">N
 Once ```choosenim``` is installed you can ```nimble install bipbuffer``` to pull the latest bipbuffer release and all its dependencies
 
 ## Documentation
-Documentation can be found <a class="reference" href="https://github.com/MarcAzar/BipBuffer/docs/bipbuffer.html">here</a>
+Documentation can be found <a class="reference" href="docs/bipbuffer.html">here</a>
