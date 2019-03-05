@@ -15,7 +15,7 @@
 ##  ::
 ##    import bipbuffer
 ##
-##    # Create buffer with capacity of 4 int items#
+##    # Create buffer with capacity of 4 int items
 ##    var buffer = newBipBuffer[int](4) 
 ##    
 ##    
