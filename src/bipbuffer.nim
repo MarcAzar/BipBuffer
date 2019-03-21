@@ -136,7 +136,7 @@ proc reservedLen*(x: BipBuffer): int =
   ## This is the amount of available space for writing data to buffer
   x.reserveEnd - x.reserveStart
  
-proc reserve*[T](x: var BipBuffer[T], length: int): ShallowSlice[T] {.raises: [OverflowError].} =
+proc reserve*[T](x: var BipBuffer[T], length: int): ShallowSlice[T] {.raises: [OverflowError], inline.} =
   ## Reserves up to `length` slots of storing data.
   ##
   ## If there is less free space than needed, the buffer size will equal the
@@ -173,7 +173,7 @@ proc committedLen*(x: BipBuffer): int =
   ## `read()`
   x.tailA - x.headA + x.tailB - x.headB
 
-proc commit*[T](x: var BipBuffer[T], length: int) =
+proc commit*[T](x: var BipBuffer[T], length: int) {.inline.} =
   ## Commits data unto reserved memory block allowing it to be read
   ##
   ## If `length` is `0` reservation will be cleared wihtout any other changes
@@ -194,7 +194,7 @@ proc commit*[T](x: var BipBuffer[T], length: int) =
   x.reserveStart = 0
   x.reserveEnd = 0
 
-proc read*[T](x: var BipBuffer[T]): ShallowSlice[T] =
+proc read*[T](x: var BipBuffer[T]): ShallowSlice[T] {.inline.} =
   ## Retreives available commited data as a contiguous block
   ##
   ## Returns `nil` if no data is available. 
@@ -206,7 +206,7 @@ proc read*[T](x: var BipBuffer[T]): ShallowSlice[T] =
   result.point = pBuffer
   result.size = dataAvail
 
-proc decommit*[T](x: var BipBuffer[T], length: int) =
+proc decommit*[T](x: var BipBuffer[T], length: int) {.inline.} =
   ## Marks the first `length` elements of available data as seen
   ##
   ## Next call of `read()` will not include these elements
