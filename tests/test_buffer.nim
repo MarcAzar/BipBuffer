@@ -41,9 +41,9 @@ when isMainModule:
       reserved[0] = 7 
       reserved[1] = 22
       reserved[2] = 218
-    doAssert buffer.committedLen == 0
+    doAssert buffer.len == 0
     buffer.commit(3)
-    doAssert buffer.committedLen == 3
+    doAssert buffer.len == 3
     doAssert buffer.reservedLen == 0  
     bloc = buffer.read
     doAssert bloc.len == 3
@@ -131,7 +131,7 @@ when isMainModule:
     buffer.commit(4)
     doAssert buffer.reservedLen == 0
     buffer.clear
-    doAssert buffer.committedLen == 0
+    doAssert buffer.len == 0
 
   buffer.free
   doAssert buffer.len == 0

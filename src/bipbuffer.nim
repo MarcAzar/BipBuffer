@@ -65,12 +65,6 @@ type
       tailA, tailB: int
       reserveStart, reserveEnd: int
 
-  ## Hack to get the buffer capacity, specific to Nim  
-  TGenericSeq =
-    object
-      length, capacity: int
-  PGenericSeq = ptr TGenericSeq
-
   ## To avoid manipulating the buffer pointer directly, I'm assigning a new
   ## object to hold a copy of the buffer pointer and required slice size to
   ## manipulate
@@ -96,17 +90,20 @@ proc `[]=`*[T](p: ShallowSlice[T], k:int, val: T) {.inline.} =
   doAssert k < p.size
   (p.point + k)[] = val
 
-proc cap[T](x: seq[T]): int =
+proc cap(x: BipBuffer): int =
   ## Get buffer capacity
-  cast[PGenericSeq](x).capacity and not low(int)
+  x.buffer.len
 
 proc len*[T](x: ShallowSlice[T]): int =
   ## Get slice length
   x.size
 
-proc len*[T](x: BipBuffer[T]): int =
-  ## Get Buffer length
-  x.buffer.len
+proc len*(x: BipBuffer): int =
+  ## Returns number of commited elements
+  ##
+  ## This approximates the size of the buffer that will be returned on 
+  ## `read()`
+  x.tailA - x.headA + x.tailB - x.headB
 
 proc clear*(x: var BipBuffer) =
   ## Clears all regions and reservations
@@ -147,7 +144,7 @@ proc reserve*[T](x: var BipBuffer[T], length: int): ShallowSlice[T] {.raises: [O
     reserveStart = x.tailB
     freeSpace = x.headA - x.tailB
   else:
-    let spaceAfterA = x.buffer.cap - x.tailA
+    let spaceAfterA = x.cap - x.tailA
     if spaceAfterA >= x.headA:
       reserveStart = x.tailA
       freeSpace = spaceAfterA
@@ -165,13 +162,6 @@ proc reserve*[T](x: var BipBuffer[T], length: int): ShallowSlice[T] {.raises: [O
   var pBuffer: ptr = addr x.buffer[x.reserveStart]
   result.point = pBuffer
   result.size = reserveLength
-
-proc committedLen*(x: BipBuffer): int =
-  ## Returns number of commited elements
-  ##
-  ## This approximates the size of the buffer that will be returned on 
-  ## `read()`
-  x.tailA - x.headA + x.tailB - x.headB
 
 proc commit*[T](x: var BipBuffer[T], length: int) {.inline.} =
   ## Commits data unto reserved memory block allowing it to be read
@@ -220,4 +210,4 @@ proc decommit*[T](x: var BipBuffer[T], length: int) {.inline.} =
 
 proc isEmpty*(x: BipBuffer): bool =
   ## Check if buffer is empty
-  reservedLen(x) == 0 and committedLen(x) == 0
+  reservedLen(x) == 0 and len(x) == 0
