@@ -26,7 +26,7 @@ block:
 buffer.decommit(2)  # Mark first two parts of the block as free
 
 block:
-  bloc = buffer.read # The block should now contain only the last two values
+  var bloc = buffer.read # The block should now contain only the last two values
   assert bloc[0] == 218
   assert bloc[1] == 56
 ```
