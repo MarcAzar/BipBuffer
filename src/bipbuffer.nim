@@ -45,7 +45,7 @@
 ##    
 ##    # The block should now contain only the last two values
 ##    block:
-##      bloc = buffer.read 
+##      var bloc = buffer.read 
 ##      assert bloc[0] == 218
 ##      assert bloc[1] == 56
 ##
@@ -97,6 +97,9 @@ proc cap(x: BipBuffer): int =
 proc len*[T](x: ShallowSlice[T]): int =
   ## Get slice length
   x.size
+
+proc isNil*[T](x: ShallowSlice[T]): bool =
+  isNil(x.point)
 
 proc len*(x: BipBuffer): int =
   ## Returns number of commited elements
@@ -190,6 +193,7 @@ proc read*[T](x: var BipBuffer[T]): ShallowSlice[T] {.inline.} =
   ## Returns `nil` if no data is available. 
   let dataAvail = x.tailA - x.headA
   if (dataAvail) == 0:
+    result.point = nil
     return
   
   var pBuffer: ptr = addr x.buffer[x.headA]

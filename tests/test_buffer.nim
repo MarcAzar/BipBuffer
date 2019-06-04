@@ -15,14 +15,14 @@ when isMainModule:
   block:
     buffer = newBipBuffer[int](3)
     bloc = buffer.read
-    doAssert bloc.len == 0
+    doAssert bloc.isNil
     echo "Passed read empty test"
 
   block:
     buffer = newBipBuffer[int](3)
     reserved = buffer.reserve(2)
     bloc = buffer.read
-    doAssert bloc.len == 0
+    doAssert bloc.isNil
     echo "Passed read uncommitted test"
 
   block:
@@ -65,7 +65,7 @@ when isMainModule:
     except:
       flag = true
     
-    doAssert flag == true  
+    doAssert flag
     echo "Passed reserve full test"
 
   block:

@@ -1264,8 +1264,10 @@ function main() {
     title="`[]=`[T](p: ShallowSlice[T]; k: int; val: T)"><wbr />`[]=`<span class="attachedType" style="visibility:hidden">ShallowSlice</span></a></li>
   <li><a class="reference" href="#len%2CShallowSlice%5BT%5D"
     title="len[T](x: ShallowSlice[T]): int"><wbr />len<span class="attachedType" style="visibility:hidden">ShallowSlice</span></a></li>
-  <li><a class="reference" href="#len%2CBipBuffer%5BT%5D"
-    title="len[T](x: BipBuffer[T]): int"><wbr />len<span class="attachedType" style="visibility:hidden">BipBuffer</span></a></li>
+  <li><a class="reference" href="#isNil%2CShallowSlice%5BT%5D"
+    title="isNil[T](x: ShallowSlice[T]): bool"><wbr />is<wbr />Nil<span class="attachedType" style="visibility:hidden">ShallowSlice</span></a></li>
+  <li><a class="reference" href="#len%2CBipBuffer"
+    title="len(x: BipBuffer): int"><wbr />len<span class="attachedType" style="visibility:hidden">BipBuffer</span></a></li>
   <li><a class="reference" href="#clear%2CBipBuffer"
     title="clear(x: var BipBuffer)"><wbr />clear<span class="attachedType" style="visibility:hidden">BipBuffer</span></a></li>
   <li><a class="reference" href="#free%2CBipBuffer"
@@ -1276,8 +1278,6 @@ function main() {
     title="reservedLen(x: BipBuffer): int"><wbr />reserved<wbr />Len<span class="attachedType" style="visibility:hidden">BipBuffer</span></a></li>
   <li><a class="reference" href="#reserve%2CBipBuffer%5BT%5D%2Cint"
     title="reserve[T](x: var BipBuffer[T]; length: int): ShallowSlice[T]"><wbr />reserve<span class="attachedType" style="visibility:hidden">BipBuffer</span></a></li>
-  <li><a class="reference" href="#committedLen%2CBipBuffer"
-    title="committedLen(x: BipBuffer): int"><wbr />committed<wbr />Len<span class="attachedType" style="visibility:hidden">BipBuffer</span></a></li>
   <li><a class="reference" href="#commit%2CBipBuffer%5BT%5D%2Cint"
     title="commit[T](x: var BipBuffer[T]; length: int)"><wbr />commit<span class="attachedType" style="visibility:hidden">BipBuffer</span></a></li>
   <li><a class="reference" href="#read%2CBipBuffer%5BT%5D"
@@ -1308,7 +1308,7 @@ function main() {
 
 <h1><a class="toc-backref" id="usage" href="#usage">Usage</a></h1><blockquote><p><pre>import bipbuffer
 
-# Create buffer with capacity of 4 int items#
+# Create buffer with capacity of 4 int items
 var buffer = newBipBuffer[int](4)
 
 
@@ -1338,7 +1338,7 @@ buffer.decommit(2)
 
 # The block should now contain only the last two values
 block:
-  bloc = buffer.read
+  var bloc = buffer.read
   assert bloc[0] == 218
   assert bloc[1] == 56</pre>
 </p></blockquote>
@@ -1389,10 +1389,18 @@ Routine to assign buffer with value at specific index with assertion not to exce
 Get slice length
 
 </dd>
-<a id="len,BipBuffer[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">len</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+<a id="isNil,ShallowSlice[T]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isNil</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="bipbuffer.html#ShallowSlice"><span class="Identifier">ShallowSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
-Get Buffer length
+
+
+</dd>
+<a id="len,BipBuffer"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">len</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+<dd>
+<p>Returns number of commited elements</p>
+<p>This approximates the size of the buffer that will be returned on <cite>read()</cite></p>
+
 
 </dd>
 <a id="clear,BipBuffer"></a>
@@ -1425,23 +1433,15 @@ Create a buffer of capacity <cite>length</cite>
 </dd>
 <a id="reserve,BipBuffer[T],int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">reserve</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="bipbuffer.html#ShallowSlice"><span class="Identifier">ShallowSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">inline</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <p>Reserves up to <cite>length</cite> slots of storing data.</p>
 <p>If there is less free space than needed, the buffer size will equal the free space. It will returns an OverflowError if there is no free space.</p>
 
 
 </dd>
-<a id="committedLen,BipBuffer"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">committedLen</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
-<dd>
-<p>Returns number of commited elements</p>
-<p>This approximates the size of the buffer that will be returned on <cite>read()</cite></p>
-
-
-</dd>
 <a id="commit,BipBuffer[T],int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">commit</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">commit</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <p>Commits data unto reserved memory block allowing it to be read</p>
 <p>If <cite>length</cite> is <cite>0</cite> reservation will be cleared wihtout any other changes</p>
@@ -1449,7 +1449,7 @@ Create a buffer of capacity <cite>length</cite>
 
 </dd>
 <a id="read,BipBuffer[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">read</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="bipbuffer.html#ShallowSlice"><span class="Identifier">ShallowSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">read</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="bipbuffer.html#ShallowSlice"><span class="Identifier">ShallowSlice</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <p>Retreives available commited data as a contiguous block</p>
 <p>Returns <cite>nil</cite> if no data is available. </p>
@@ -1457,7 +1457,7 @@ Create a buffer of capacity <cite>length</cite>
 
 </dd>
 <a id="decommit,BipBuffer[T],int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">decommit</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">decommit</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="bipbuffer.html#BipBuffer"><span class="Identifier">BipBuffer</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <p>Marks the first <cite>length</cite> elements of available data as seen</p>
 <p>Next call of <cite>read()</cite> will not include these elements</p>
@@ -1491,7 +1491,7 @@ Routine to perform pointer arithmatic. Advances pointer to next position in a co
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-24 16:11:45 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-04 14:44:32 UTC</small>
       </div>
     </div>
   </div>
