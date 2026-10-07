@@ -76,7 +76,7 @@ type
 template `+`*[T](p: ptr T, off: int): ptr T =
   ## Routine to perform pointer arithmatic. Advances pointer to next position
   ## in a continguous memory block
-  cast[ptr type(p[])](cast[ByteAddress](p) +% off * sizeof(p[]))
+  cast[ptr type(p[])](cast[int](p) +% off * sizeof(p[]))
 
 proc `[]`*[T](p: ShallowSlice[T], k: int) : T {.inline.} =
   ## Routine to dereference pointer with assertion not to exceed slice
@@ -136,11 +136,11 @@ proc reservedLen*(x: BipBuffer): int =
   ## This is the amount of available space for writing data to buffer
   x.reserveEnd - x.reserveStart
  
-proc reserve*[T](x: var BipBuffer[T], length: int): ShallowSlice[T] {.raises: [OverflowError], inline.} =
+proc reserve*[T](x: var BipBuffer[T], length: int): ShallowSlice[T] {.raises: [OverflowDefect], inline.} =
   ## Reserves up to `length` slots of storing data.
   ##
   ## If there is less free space than needed, the buffer size will equal the
-  ## free space. It will returns an OverflowError if there is no free space.
+  ## free space. It will returns an OverflowDefect if there is no free space.
   var reserveStart: int
   var freeSpace: int
   if (x.tailB - x.headB) > 0:
@@ -156,7 +156,7 @@ proc reserve*[T](x: var BipBuffer[T], length: int): ShallowSlice[T] {.raises: [O
       freeSpace = x.headA
   
   if freeSpace == 0:
-    raise newException(OverflowError, "Not enough space")
+    raise newException(OverflowDefect, "Not enough space")
   
   let reserveLength = min(freeSpace, length)
   x.reserveStart = reserveStart
